@@ -1,0 +1,8 @@
+{
+  "base-sepolia": {
+    "GroupFactory": {
+      "address": "0x070Dd87AfC5b5671Ed0E64E36B8Ba320fCfabB50",
+      "startBlock": 28638937
+    }
+  }
+}

@@ -1,0 +1,53 @@
+[
+  { "type": "constructor", "inputs": [], "stateMutability": "nonpayable" },
+  { "name": "FailedDeployment", "type": "error", "inputs": [] },
+  {
+    "name": "InsufficientBalance",
+    "type": "error",
+    "inputs": [
+      { "name": "balance", "type": "uint256", "internalType": "uint256" },
+      { "name": "needed", "type": "uint256", "internalType": "uint256" }
+    ]
+  },
+  {
+    "name": "GroupCreated",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "group",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "creator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "name": "createGroup",
+    "type": "function",
+    "inputs": [{ "name": "name", "type": "string", "internalType": "string" }],
+    "outputs": [
+      { "name": "clone", "type": "address", "internalType": "address" }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "impl",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  }
+]
