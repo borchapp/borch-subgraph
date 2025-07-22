@@ -1,84 +1,90 @@
-import {
-  ExpenseAdded,
-  ExpenseReversed,
-  ExpenseAdjusted,
-  Payment,
-  JoinApproved
-} from "../generated/templates/Group/Group";
-import {
-  Expense,
-  ExpenseReversal,
-  ExpenseAdjustment,
-  PaymentRecord,
-  Membership
-} from "../generated/schema";
+import { ExpenseAdded, ExpenseReversed, ExpenseAdjusted, Payment, JoinApproved } from "../generated/templates/Group/Group";
+import { Expense, ExpenseReversal, ExpenseAdjustment, PaymentRecord, Membership } from "../generated/schema";
 
-// --- ExpenseAdded handler ---
+/**
+ * Handles ExpenseAdded event: records a new expense.
+ */
 export function handleExpenseAdded(event: ExpenseAdded): void {
-  let id = event.address.toHex() + "-" + event.params.id.toString();
-  let exp = new Expense(id);
+  // Unique ID: contract address + expense ID
+  const id = event.address.toHex() + "-" + event.params.id.toString();
+  const exp = new Expense(id);
 
-  exp.group       = event.address;
-  exp.payer       = event.params.payer;
-  exp.description = event.params.desc;
-  exp.amount      = event.params.amount;
-  exp.timestamp   = event.block.timestamp;
-  exp.save();
+  exp.group       = event.address;          // Group contract instance
+  exp.payer       = event.params.payer;     // Transaction initiator
+  exp.description = event.params.desc;      // Expense description
+  exp.amount      = event.params.amount;    // Amount (micro-USDC)
+  exp.timestamp   = event.block.timestamp;  // Block timestamp
+
+  exp.save();  // Persist entity
 }
 
-// --- ExpenseReversed handler ---
+/**
+ * Handles ExpenseReversed event: logs reversal of an expense.
+ */
 export function handleExpenseReversed(event: ExpenseReversed): void {
-  // reversalId ve originalId de aynı mapping ile yeni Expense kaydıdır
-  let revId = event.address.toHex() + "-" + event.params.reversalId.toString();
-  let origId = event.address.toHex() + "-" + event.params.originalId.toString();
+  // IDs for original and reversal entries
+  const reversalId = event.address.toHex() + "-" + event.params.reversalId.toString();
+  const originalId = event.address.toHex() + "-" + event.params.originalId.toString();
+  const rev = new ExpenseReversal(reversalId);
 
-  let rev = new ExpenseReversal(revId);
-  rev.group            = event.address;
-  rev.originalExpense  = origId;
-  rev.reversalExpense  = revId;
-  rev.timestamp        = event.block.timestamp;
-  rev.save();
+  rev.group           = event.address;        // Contract instance
+  rev.originalExpense = originalId;           // ID of expense being reversed
+  rev.reversalExpense = reversalId;           // This reversal record
+  rev.timestamp       = event.block.timestamp;
+
+  rev.save();  // Persist reversal
 }
 
-// --- ExpenseAdjusted handler ---
+/**
+ * Handles ExpenseAdjusted event: captures full adjust lifecycle.
+ */
 export function handleExpenseAdjusted(event: ExpenseAdjusted): void {
-  // Tek bir ID atamak için üç ID’yi birleştiriyoruz
-  let adjId = [
+  // Combined ID for the adjustment event
+  const adjId = [
     event.address.toHex(),
     event.params.originalId.toString(),
     event.params.reversalId.toString(),
     event.params.newId.toString()
   ].join("-");
+  const adj = new ExpenseAdjustment(adjId);
 
-  let adj = new ExpenseAdjustment(adjId);
-  adj.group            = event.address;
-  adj.originalExpense  = event.address.toHex() + "-" + event.params.originalId.toString();
-  adj.reversalExpense  = event.address.toHex() + "-" + event.params.reversalId.toString();
-  adj.newExpense       = event.address.toHex() + "-" + event.params.newId.toString();
-  adj.timestamp        = event.block.timestamp;
-  adj.save();
+  adj.group           = event.address;
+  adj.originalExpense = event.address.toHex() + "-" + event.params.originalId.toString();
+  adj.reversalExpense = event.address.toHex() + "-" + event.params.reversalId.toString();
+  adj.newExpense      = event.address.toHex() + "-" + event.params.newId.toString();
+  adj.timestamp       = event.block.timestamp;
+
+  adj.save();  // Persist adjustment summary
 }
 
-// --- Payment handler ---
+/**
+ * Handles Payment event: records debt settlement on-chain.
+ */
 export function handlePayment(event: Payment): void {
-  let id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
-  let record = new PaymentRecord(id);
+  // Unique ID: transaction hash + log index
+  const id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
+  const rec = new PaymentRecord(id);
 
-  record.group     = event.address;
-  record.debtor    = event.params.debtor;
-  record.creditor  = event.params.creditor;
-  record.amount    = event.params.amount;
-  record.timestamp = event.block.timestamp;
-  record.save();
+  rec.group     = event.address;         // Contract instance
+  rec.debtor    = event.params.debtor;   // Payer of debt
+  rec.creditor  = event.params.creditor; // Recipient of payment
+  rec.amount    = event.params.amount;   // Amount settled
+  rec.timestamp = event.block.timestamp; // Block timestamp
+
+  rec.save();  // Persist payment record
 }
 
-// --- JoinApproved handler ---
+/**
+ * Handles JoinApproved event: logs when a user joins the group.
+ */
 export function handleJoinApproved(event: JoinApproved): void {
-  let id = event.address.toHex() + "-" + event.params.applicant.toHex();
-  let membership = new Membership(id);
+  // Unique ID: group address + applicant address
+  const id = event.address.toHex() + "-" + event.params.applicant.toHex();
+  const mem = new Membership(id);
 
-  membership.group    = event.address;
-  membership.user     = event.params.applicant;
-  membership.joinedAt = event.block.timestamp;
-  membership.save();
+  mem.group    = event.address;              // Contract instance
+  mem.user     = event.params.applicant;     // New member
+  mem.joinedAt = event.block.timestamp;      // Approval timestamp
+
+  mem.save();  // Persist membership
 }
