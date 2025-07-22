@@ -68,6 +68,62 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "uint256",
+          "name": "originalId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "reversalId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "newId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "group",
+          "type": "address"
+        }
+      ],
+      "name": "ExpenseAdjusted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "reversalId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "originalId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "group",
+          "type": "address"
+        }
+      ],
+      "name": "ExpenseReversed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
           "internalType": "address",
           "name": "group",
           "type": "address"
@@ -243,6 +299,29 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "originalId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "newAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "newDesc",
+          "type": "string"
+        }
+      ],
+      "name": "adjustExpense",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "admin",
       "outputs": [
@@ -307,6 +386,35 @@
           "internalType": "uint128",
           "name": "",
           "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "expenseRecords",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "payer",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "desc",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",

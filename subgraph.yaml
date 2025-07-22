@@ -26,6 +26,7 @@ dataSources:
         - event: GroupCreated(indexed address,string,indexed address)
           handler: handleGroupCreated
       file: ./src/group-factory.ts
+
 templates:
   - name: Group
     kind: ethereum
@@ -38,7 +39,9 @@ templates:
       language: wasm/assemblyscript
       entities:
         - Expense
-        - Payment
+        - ExpenseReversal
+        - ExpenseAdjustment
+        - PaymentRecord
         - Membership
       abis:
         - name: Group
@@ -46,6 +49,10 @@ templates:
       eventHandlers:
         - event: ExpenseAdded(indexed uint256,indexed address,indexed address,string,uint256,address[],uint256[])
           handler: handleExpenseAdded
+        - event: ExpenseReversed(indexed uint256,indexed uint256,indexed address)
+          handler: handleExpenseReversed
+        - event: ExpenseAdjusted(indexed uint256,indexed uint256,indexed uint256,address)
+          handler: handleExpenseAdjusted
         - event: Payment(indexed address,indexed address,indexed address,uint256)
           handler: handlePayment
         - event: JoinApproved(indexed address,indexed address)

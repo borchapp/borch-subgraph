@@ -1,8 +1,8 @@
 type GroupCreated @entity(immutable: true) {
   id: Bytes!
-  group: Bytes! # address
-  name: String! # string
-  creator: Bytes! # address
+  group: Bytes!
+  name: String!
+  creator: Bytes!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -14,6 +14,23 @@ type Expense @entity(immutable: true) {
   payer: Bytes!
   description: String!
   amount: BigInt!
+  timestamp: BigInt!
+}
+
+type ExpenseReversal @entity(immutable: true) {
+  id: ID!
+  group: Bytes!
+  originalExpense: ID!
+  reversalExpense: ID!
+  timestamp: BigInt!
+}
+
+type ExpenseAdjustment @entity(immutable: true) {
+  id: ID!
+  group: Bytes!
+  originalExpense: ID!
+  reversalExpense: ID!
+  newExpense: ID!
   timestamp: BigInt!
 }
 
