@@ -1,51 +1,56 @@
-type GroupCreated @entity(immutable: true) {
-  id: Bytes!
-  group: Bytes!
+type Group @entity(immutable: true) {
+  id: ID!
   name: String!
   creator: Bytes!
   blockNumber: BigInt!
-  blockTimestamp: BigInt!
+  createdAt: BigInt!
   transactionHash: Bytes!
+
+  memberships: [Membership!]!       @derivedFrom(field: "group")
+  expenses: [Expense!]!            @derivedFrom(field: "group")
+  reversals: [ExpenseReversal!]!   @derivedFrom(field: "group")
+  adjustments: [ExpenseAdjustment!]! @derivedFrom(field: "group")
+  payments: [PaymentRecord!]!      @derivedFrom(field: "group")
 }
 
 type Expense @entity(immutable: true) {
   id: ID!
-  group: Bytes!
+  group: Group!
   payer: Bytes!
   description: String!
   amount: BigInt!
-  timestamp: BigInt!
+  createdAt: BigInt!
 }
 
 type ExpenseReversal @entity(immutable: true) {
   id: ID!
-  group: Bytes!
+  group: Group!
   originalExpense: ID!
   reversalExpense: ID!
-  timestamp: BigInt!
+  createdAt: BigInt!
 }
 
-type ExpenseAdjustment @entity(immutable: true) {
+ type ExpenseAdjustment @entity(immutable: true) {
   id: ID!
-  group: Bytes!
+  group: Group!
   originalExpense: ID!
   reversalExpense: ID!
   newExpense: ID!
-  timestamp: BigInt!
+  createdAt: BigInt!
 }
 
 type PaymentRecord @entity(immutable: true) {
   id: ID!
-  group: Bytes!
+  group: Group!
   debtor: Bytes!
   creditor: Bytes!
   amount: BigInt!
-  timestamp: BigInt!
+  createdAt: BigInt!
 }
 
 type Membership @entity(immutable: true) {
   id: ID!
-  group: Bytes!
+  group: Group!
   user: Bytes!
   joinedAt: BigInt!
 }
